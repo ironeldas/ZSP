@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context="com.github.ironeldas.zsp.AddDataActivity">
+
+    <RelativeLayout
+        android:id="@+id/power"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/tv_power"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:gravity="center_vertical|center_horizontal"
+            android:text="Power"
+            android:textSize="30sp" />
+
+        <EditText
+            android:id="@+id/et_power"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_below="@+id/tv_power"
+            android:ems="10"
+            android:inputType="numberDecimal" />
+
+        <Button
+            android:id="@+id/clear_power"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/tv_power"
+            android:layout_alignTop="@id/tv_power"
+            android:layout_toEndOf="@id/tv_power"
+            android:layout_toRightOf="@+id/tv_power"
+            android:text="Clear" />
+
+        <Button
+            android:id="@+id/load_power"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/tv_power"
+            android:layout_alignTop="@id/tv_power"
+            android:layout_toEndOf="@id/clear_power"
+            android:layout_toRightOf="@+id/clear_power"
+            android:text="Load" />
+
+        <Button
+            android:id="@+id/save_power"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/tv_power"
+            android:layout_alignTop="@id/tv_power"
+            android:layout_toEndOf="@id/load_power"
+            android:layout_toRightOf="@+id/load_power"
+            android:text="Save" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/water"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/power">
+
+        <TextView
+            android:id="@+id/tv_water"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginTop="10dp"
+            android:gravity="center_vertical|center_horizontal"
+            android:text="Water"
+            android:textSize="30sp" />
+
+        <Button
+            android:id="@+id/clear_water"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/tv_water"
+            android:layout_alignTop="@id/tv_water"
+            android:layout_toEndOf="@id/tv_water"
+            android:layout_toRightOf="@+id/tv_water"
+            android:text="Clear" />
+
+        <Button
+            android:id="@+id/load_water"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/tv_water"
+            android:layout_alignTop="@id/tv_water"
+            android:layout_toEndOf="@id/clear_water"
+            android:layout_toRightOf="@+id/clear_water"
+            android:text="Load" />
+
+        <EditText
+            android:id="@+id/et_water"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_below="@+id/tv_water"
+            android:ems="10"
+            android:inputType="numberDecimal" />
+
+        <Button
+            android:id="@+id/save_water"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/tv_water"
+            android:layout_alignTop="@id/tv_water"
+            android:layout_toEndOf="@id/load_water"
+            android:layout_toRightOf="@+id/load_water"
+            android:text="Save" />
+    </RelativeLayout>
+
+</RelativeLayout>

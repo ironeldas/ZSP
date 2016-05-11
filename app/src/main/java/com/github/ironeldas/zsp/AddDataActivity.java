@@ -114,7 +114,7 @@ public class AddDataActivity extends AppCompatActivity {
 
         @Override
         protected void onPreExecute() {
-            String ip = "127.0.0.1";
+            String ip = "192.168.43.111";
             String port = "821";
 
             Calendar cal = Calendar.getInstance();
@@ -169,7 +169,7 @@ public class AddDataActivity extends AppCompatActivity {
 
         @Override
         protected void onPreExecute() {
-            String ip = "127.0.0.1";
+            String ip = "192.168.43.111";
             String port = "821";
             this.url = "http://" + ip + ":" + port + "/getconsumption?typ=" + this.type;
         }

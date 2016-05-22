@@ -21,6 +21,9 @@ import java.util.Calendar;
 
 public class AddDataActivity extends AppCompatActivity {
 
+    private String ip = "192.168.43.111";
+    private String port = "821";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -169,13 +172,20 @@ public class AddDataActivity extends AppCompatActivity {
 
         @Override
         protected void onPreExecute() {
-            String ip = "192.168.43.111";
-            String port = "821";
             this.url = "http://" + ip + ":" + port + "/getconsumption?typ=" + this.type;
         }
 
         @Override
         protected String doInBackground(Void... arg) {
+            try {
+                return downloadValues();
+            } catch (IOException e) {
+                return "Unable to retrieve web page.";
+            }
+        }
+
+        private String downloadValues() throws IOException {
+            InputStream inputStream = null;
             try {
                 HttpURLConnection conn = (HttpURLConnection) (new URL(this.url)).openConnection();
                 conn.setReadTimeout(10000);
@@ -183,19 +193,23 @@ public class AddDataActivity extends AppCompatActivity {
                 conn.setRequestMethod("GET");
                 conn.setDoInput(true);
                 conn.connect();
-                InputStream is = conn.getInputStream();
+                inputStream = conn.getInputStream();
 
-                Reader reader;
-                reader = new InputStreamReader(is, "UTF-8");
-                char[] buffer = new char[50];
-                reader.read(buffer);
-
-                is.close();
-                reader.close();
-                return new String(buffer);
-            } catch (IOException e) {
-                return "Unable to retrieve web page.";
+                return readStream(inputStream);
+            } finally {
+                if (inputStream != null)
+                    inputStream.close();
             }
+        }
+
+        private String readStream(InputStream inputStream) throws IOException {
+
+            Reader reader;
+            reader = new InputStreamReader(inputStream, "UTF-8");
+            char[] buffer = new char[50];
+            reader.read(buffer);
+            reader.close();
+            return new String(buffer);
         }
 
         @Override

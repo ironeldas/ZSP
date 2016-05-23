@@ -164,27 +164,39 @@ public class AddDataActivity extends AppCompatActivity {
     private class DownloadValueTask extends AsyncTask<Void, Void, String> {
         private String url;
         private String type;
+        /**
+         * Wenn value den Wert -1 hat, bedeutet das, dass es sich um einen Download von Werten handelt.
+         */
+        private int value;
 
-        public DownloadValueTask(String type) {
+        public DownloadValueTask(String type, int value) {
             super();
             this.type = type;
+            this.value = value;
         }
 
         @Override
         protected void onPreExecute() {
-            this.url = "http://" + ip + ":" + port + "/getconsumption?typ=" + this.type;
+            if (value == -1) {
+                this.url = "http://" + ip + ":" + port + "/getconsumption?typ=" + this.type;
+            } else {
+                Calendar cal = Calendar.getInstance();
+                String assembleddate = String.valueOf(cal.get(Calendar.YEAR)) + String.valueOf(cal.get(Calendar.MONTH)) + String.valueOf(cal.get(Calendar.DAY_OF_MONTH));
+
+                this.url = "http://" + ip + ":" + port + "/consumption?typ=" + this.type + "&date=" + assembleddate + "&value=" + value;
+            }
         }
 
         @Override
         protected String doInBackground(Void... arg) {
             try {
-                return downloadValues();
+                return openUrl();
             } catch (IOException e) {
                 return "Unable to retrieve web page.";
             }
         }
 
-        private String downloadValues() throws IOException {
+        private String openUrl() throws IOException {
             InputStream inputStream = null;
             try {
                 HttpURLConnection conn = (HttpURLConnection) (new URL(this.url)).openConnection();
@@ -214,15 +226,19 @@ public class AddDataActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(String answer) {
-            switch (this.type) {
-                case "strom":
-                    EditText etStrom = (EditText) findViewById(R.id.et_power);
-                    etStrom.setText(answer);
-                    break;
-                case "wasser":
-                    EditText etWasser = (EditText) findViewById(R.id.et_water);
-                    etWasser.setText(answer);
-                    break;
+            if (value == -1) {
+                switch (this.type) {
+                    case "strom":
+                        EditText etStrom = (EditText) findViewById(R.id.et_power);
+                        etStrom.setText(answer);
+                        break;
+                    case "wasser":
+                        EditText etWasser = (EditText) findViewById(R.id.et_water);
+                        etWasser.setText(answer);
+                        break;
+                }
+            } else {
+                if (answer != "OK") Toast.makeText(getApplicationContext(), "Couldn't upload values for " + type, Toast.LENGTH_SHORT);
             }
         }
     }

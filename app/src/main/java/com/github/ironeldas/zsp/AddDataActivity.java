@@ -38,26 +38,7 @@ public class AddDataActivity extends AppCompatActivity {
                             getSystemService(Context.CONNECTIVITY_SERVICE);
                     NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
                     if (networkInfo != null && networkInfo.isConnected()) {
-                        new DownloadValueTask("strom").execute();
-                    } else {
-                        Toast.makeText(getApplicationContext(), "No network connection available.", Toast.LENGTH_SHORT).show();
-                    }
-                }
-            });
-        } catch (NullPointerException npe) {
-            Toast.makeText(getApplicationContext(), "Couldn't set Listener.", Toast.LENGTH_SHORT).show();
-        }
-
-        Button loadWater = (Button) findViewById(R.id.load_water);
-        try {
-            loadWater.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    ConnectivityManager connMgr = (ConnectivityManager)
-                            getSystemService(Context.CONNECTIVITY_SERVICE);
-                    NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
-                    if (networkInfo != null && networkInfo.isConnected()) {
-                        new DownloadValueTask("wasser").execute();
+                        new InterfereWithValueserverTask("strom", -1).execute();
                     } else {
                         Toast.makeText(getApplicationContext(), "No network connection available.", Toast.LENGTH_SHORT).show();
                     }
@@ -76,26 +57,7 @@ public class AddDataActivity extends AppCompatActivity {
                             getSystemService(Context.CONNECTIVITY_SERVICE);
                     NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
                     if (networkInfo != null && networkInfo.isConnected()) {
-                        new UploadValueTask("strom").execute(new Double(savePower.getText().toString()));
-                    } else {
-                        Toast.makeText(getApplicationContext(), "No network connection available.", Toast.LENGTH_SHORT).show();
-                    }
-                }
-            });
-        } catch (NullPointerException npe) {
-            Toast.makeText(getApplicationContext(), "Couldn't set Listener.", Toast.LENGTH_SHORT).show();
-        }
-
-        final Button saveWater = (Button) findViewById(R.id.save_water);
-        try {
-            saveWater.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    ConnectivityManager connMgr = (ConnectivityManager)
-                            getSystemService(Context.CONNECTIVITY_SERVICE);
-                    NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
-                    if (networkInfo != null && networkInfo.isConnected()) {
-                        new UploadValueTask("wasser").execute(new Double(saveWater.getText().toString()));
+                        new InterfereWithValueserverTask("strom", new Double(savePower.getText().toString())).execute();
                     } else {
                         Toast.makeText(getApplicationContext(), "No network connection available.", Toast.LENGTH_SHORT).show();
                     }
@@ -106,70 +68,16 @@ public class AddDataActivity extends AppCompatActivity {
         }
     }
 
-    private class UploadValueTask extends AsyncTask<Double, Void, String> {
-        private String url;
-        private String type;
-
-        public UploadValueTask(String type) {
-            super();
-            this.type = type;
-        }
-
-        @Override
-        protected void onPreExecute() {
-            String ip = "192.168.43.111";
-            String port = "821";
-
-            Calendar cal = Calendar.getInstance();
-            String assembleddate = String.valueOf(cal.get(Calendar.YEAR)) + String.valueOf(cal.get(Calendar.MONTH)) + String.valueOf(cal.get(Calendar.DAY_OF_MONTH));
-
-            this.url = "http://" + ip + ":" + port + "/consumption?typ=" + this.type + "&date=" + assembleddate + "&value=";
-        }
-
-        @Override
-        protected String doInBackground(Double... d) {
-
-            d[0] = (double) Math.round(d[0] * 100d) / 100d;
-            this.url = this.url + d[0];
-
-            try {
-                HttpURLConnection conn = (HttpURLConnection) (new URL(this.url)).openConnection();
-                conn.setReadTimeout(10000);
-                conn.setConnectTimeout(15000);
-                conn.setRequestMethod("GET");
-                conn.setDoInput(true);
-                conn.connect();
-                InputStream is = conn.getInputStream();
-
-                Reader reader;
-                reader = new InputStreamReader(is, "UTF-8");
-                char[] buffer = new char[50];
-                reader.read(buffer);
-
-                is.close();
-                reader.close();
-                return new String(buffer);
-            } catch (IOException e) {
-                return "Unable to retrieve web page. URL may be invalid.";
-            }
-        }
-
-        @Override
-        protected void onPostExecute(String answer) {
-            if (answer.equals("OK"))
-                Toast.makeText(getApplicationContext(), "Upload successful.", Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    private class DownloadValueTask extends AsyncTask<Void, Void, String> {
+    private class InterfereWithValueserverTask extends AsyncTask<Void, Void, String> {
         private String url;
         private String type;
         /**
          * Wenn value den Wert -1 hat, bedeutet das, dass es sich um einen Download von Werten handelt.
          */
-        private int value;
+        private double value;
+        boolean urlassembled = false;
 
-        public DownloadValueTask(String type, int value) {
+        public InterfereWithValueserverTask(String type, double value) {
             super();
             this.type = type;
             this.value = value;
@@ -179,6 +87,7 @@ public class AddDataActivity extends AppCompatActivity {
         protected void onPreExecute() {
             if (value == -1) {
                 this.url = "http://" + ip + ":" + port + "/getconsumption?typ=" + this.type;
+                urlassembled = true;
             } else {
                 Calendar cal = Calendar.getInstance();
                 String assembleddate = String.valueOf(cal.get(Calendar.YEAR)) + String.valueOf(cal.get(Calendar.MONTH)) + String.valueOf(cal.get(Calendar.DAY_OF_MONTH));
@@ -232,13 +141,16 @@ public class AddDataActivity extends AppCompatActivity {
                         EditText etStrom = (EditText) findViewById(R.id.et_power);
                         etStrom.setText(answer);
                         break;
+                    /*
                     case "wasser":
                         EditText etWasser = (EditText) findViewById(R.id.et_water);
                         etWasser.setText(answer);
                         break;
+                    */
                 }
             } else {
-                if (answer != "OK") Toast.makeText(getApplicationContext(), "Couldn't upload values for " + type, Toast.LENGTH_SHORT);
+                if (answer != "OK")
+                    Toast.makeText(getApplicationContext(), "Couldn't upload values for " + type, Toast.LENGTH_SHORT);
             }
         }
     }

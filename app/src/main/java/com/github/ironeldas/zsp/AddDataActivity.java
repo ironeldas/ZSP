@@ -38,7 +38,7 @@ public class AddDataActivity extends AppCompatActivity {
                             getSystemService(Context.CONNECTIVITY_SERVICE);
                     NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
                     if (networkInfo != null && networkInfo.isConnected()) {
-                        new InterfereWithValueserverTask("strom", -1).execute();
+                        new InterfereWithValueserverTask("strom", true).execute();
                     } else {
                         Toast.makeText(getApplicationContext(), "No network connection available.", Toast.LENGTH_SHORT).show();
                     }
@@ -57,7 +57,7 @@ public class AddDataActivity extends AppCompatActivity {
                             getSystemService(Context.CONNECTIVITY_SERVICE);
                     NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
                     if (networkInfo != null && networkInfo.isConnected()) {
-                        new InterfereWithValueserverTask("strom", new Double(savePower.getText().toString())).execute();
+                        new InterfereWithValueserverTask("strom", false).execute();
                     } else {
                         Toast.makeText(getApplicationContext(), "No network connection available.", Toast.LENGTH_SHORT).show();
                     }
@@ -71,28 +71,37 @@ public class AddDataActivity extends AppCompatActivity {
     private class InterfereWithValueserverTask extends AsyncTask<Void, Void, String> {
         private String url;
         private String type;
-        /**
-         * Wenn value den Wert -1 hat, bedeutet das, dass es sich um einen Download von Werten handelt.
-         */
+        private boolean down;
         private double value;
-        boolean urlassembled = false;
 
-        public InterfereWithValueserverTask(String type, double value) {
+        public InterfereWithValueserverTask(String type, boolean down) {
             super();
             this.type = type;
-            this.value = value;
+            this.down = down;
         }
 
         @Override
         protected void onPreExecute() {
-            if (value == -1) {
+            getValueFromView();
+
+            if (down) {
                 this.url = "http://" + ip + ":" + port + "/getconsumption?typ=" + this.type;
-                urlassembled = true;
             } else {
                 Calendar cal = Calendar.getInstance();
                 String assembleddate = String.valueOf(cal.get(Calendar.YEAR)) + String.valueOf(cal.get(Calendar.MONTH)) + String.valueOf(cal.get(Calendar.DAY_OF_MONTH));
 
                 this.url = "http://" + ip + ":" + port + "/consumption?typ=" + this.type + "&date=" + assembleddate + "&value=" + value;
+            }
+        }
+
+        private void getValueFromView() {
+            if (!down) {
+                switch (this.type) {
+                    case "strom":
+                        EditText etStrom = (EditText) findViewById(R.id.et_power);
+                        value = new Double(etStrom.getText().toString());
+                        break;
+                }
             }
         }
 
@@ -135,18 +144,12 @@ public class AddDataActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(String answer) {
-            if (value == -1) {
+            if (down) {
                 switch (this.type) {
                     case "strom":
                         EditText etStrom = (EditText) findViewById(R.id.et_power);
                         etStrom.setText(answer);
                         break;
-                    /*
-                    case "wasser":
-                        EditText etWasser = (EditText) findViewById(R.id.et_water);
-                        etWasser.setText(answer);
-                        break;
-                    */
                 }
             } else {
                 if (answer != "OK")

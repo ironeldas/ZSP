@@ -1,9 +1,4 @@
-  Projektbeschreibung:
-Umschreiben der App, dass nur eine Klasse für die clientseitige Kommunikation verwendet wird
-Java-Servlet für serverseitige Kommunikation
-DBManager für MySQL-Datenbank
+Umschreiben der App, dass nur eine Klasse fÃ¼r die clientseitige Kommunikation verwendet wird - DONE
+Java-Servlet fÃ¼r serverseitige Kommunikation
+DBManager fÃ¼r MySQL-Datenbank
 MySQL-Datenbank
-
- Optional:
-GUI-Serverseitig ()
-dynamischer Aufbau der Android-App
